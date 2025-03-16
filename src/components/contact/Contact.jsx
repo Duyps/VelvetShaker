@@ -3,6 +3,7 @@ import Footer from '../common/footer/Footer'
 import AboutFAQ from '../about/AboutFAQ'
 import { homeContact_contact, homeContact_visit, homeContact_social, AboutFaq } from '../../data'
 import './contact.css'
+import Header from '../common/header/Header'
 
 
 function Contact() {

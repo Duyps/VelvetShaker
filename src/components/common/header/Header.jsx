@@ -1,50 +1,47 @@
-import React, {useEffect, useRef, useState, useContext} from 'react';
-import { Link, useLocation } from 'react-router-dom/cjs/react-router-dom.min'
+import React, { useLayoutEffect, useRef, useState, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import './header.css'
+import './header.css';
 import { CartContext } from '../../context/CartContext';
 
+gsap.registerPlugin(ScrollTrigger);
+
 function Header() {
-    useEffect(() => {
-      window.scrollTo(0, 0); // Cuộn lên đầu trang
-    }, []); 
-    const [isCartOpen, setIsCartOpen] = useState(false)
-    const headerRef = useRef(null);
-    const location = useLocation();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const headerRef = useRef(null);
+  const location = useLocation();
 
-    gsap.registerPlugin(ScrollTrigger);
+  useLayoutEffect(() => {
+    // Xóa các ScrollTrigger cũ trước khi tạo mới
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 
-    useEffect(() => {
-        if (location.pathname === '/'){
-          gsap.fromTo(headerRef.current, {
-            y: -100
-          }, {
-            y: 0,
-            scrollTrigger: {
-              trigger: '.HAbout',
-              start: "top top",
-              end: 'bottom top',
-              toggleActions: "play none none reverse"
-            }
-          });
-        } else {
-          ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-        }
-        
-      
-    }, [location.pathname]);
-    
-    const toggleCart = () =>{
-      setIsCartOpen(!isCartOpen);
+    if (location.pathname === '/') {
+      gsap.fromTo(headerRef.current, 
+        { y: -100 }, 
+        { y: 0, duration: 1, ease: "power2.out" }
+      );
+
+      ScrollTrigger.create({
+        trigger: '.HAbout',
+        start: "top top",
+        end: 'bottom top',
+        toggleActions: "play none none reverse"
+      });
     }
-    const {cart, removeFromCart, getTotalPrice} = useContext(CartContext);
+  }, [location.pathname]);
+
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
+  const { cart, removeFromCart, getTotalPrice } = useContext(CartContext);
+
   return (
-    <>
-      <header className="header" ref={headerRef}>
+    <header className="header" ref={headerRef}>
       <nav>
         <div className="logo">
-          <Link to='/'><img src="https://cdn.prod.website-files.com/675aa54ab7168d05ec81c87c/675b9deb1af862f5af1f7e72_Brand%20Velvet%20Shaker.svg" alt="" /></Link>
+          <Link to="/"><img src="https://cdn.prod.website-files.com/675aa54ab7168d05ec81c87c/675b9deb1af862f5af1f7e72_Brand%20Velvet%20Shaker.svg" alt="" /></Link>
         </div>
         <ul>
           <li><Link to="/">home</Link></li>
@@ -60,7 +57,7 @@ function Header() {
               </div>
               <div className="items">
                 {cart.length === 0 ? (
-                  <p className="no-items">No items founds</p>
+                  <p className="no-items">No items found</p>
                 ) : (
                   <ul>
                     {cart.map((item) => (
@@ -68,7 +65,7 @@ function Header() {
                         <div className="image">
                           <img src={item.pic} alt="" />
                         </div>
-                        <div className="infor">
+                        <div className="info">
                           <p className="name">{item.name}</p>
                           <p className="price">${item.price}</p>
                           <p
@@ -96,8 +93,7 @@ function Header() {
         </ul>
       </nav>
     </header>
-    </>
-  )
+  );
 }
 
-export default Header
+export default Header;
